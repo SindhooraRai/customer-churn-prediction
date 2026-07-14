@@ -1,9 +1,12 @@
 streamlit
+fastapi
+uvicorn
 pandas
 numpy
 scikit-learn
+joblib
+shap
 xgboost
 lightgbm
-joblib
-matplotlib
 requests
+matplotlib
