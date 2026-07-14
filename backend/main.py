@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import pandas as pd
 import joblib
 import shap
+import numpy as np
 
 from src.feature_engineering import engineer_features
 
@@ -96,7 +97,13 @@ def predict_churn(customer: CustomerFeatures):
     if isinstance(shap_values, list):
         shap_vals = shap_values[1][0]
     else:
-        shap_vals = shap_values[0]
+        shap_vals = np.array(shap_values)
+
+    # Handle different SHAP output shapes
+    if shap_vals.ndim == 3:
+        shap_vals = shap_vals[0, :, 1]
+    elif shap_vals.ndim == 2:
+        shap_vals = shap_vals[0]
 
     # Top 5 important features
     top_reasons = sorted(
