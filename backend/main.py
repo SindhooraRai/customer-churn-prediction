@@ -14,10 +14,20 @@ app = FastAPI(
 # -----------------------------
 # Load trained model
 # -----------------------------
-model = joblib.load("models/random_forest_churn.pkl")
+# -----------------------------
+# Load trained model
+# -----------------------------
+import os
 
-# Load feature names
-feature_names = joblib.load("models/feature_names.pkl")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+model = joblib.load(
+    os.path.join(BASE_DIR, "models", "random_forest_churn.pkl")
+)
+
+feature_names = joblib.load(
+    os.path.join(BASE_DIR, "models", "feature_names.pkl")
+)
 
 # SHAP Explainer
 explainer = shap.TreeExplainer(model)
