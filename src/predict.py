@@ -4,11 +4,18 @@ API_URL = "https://customer-churn-prediction-dashboard-6qfw.onrender.com/predict
 
 
 def predict_churn(data):
-    """
-    Send customer data to the FastAPI server
-    and return the prediction.
-    """
+    try:
+        response = requests.post(API_URL, json=data, timeout=30)
 
-    response = requests.post(API_URL, json=data)
+        if response.status_code != 200:
+            print(response.text)
+            return {
+                "error": response.text
+            }
 
-    return response.json()
+        return response.json()
+
+    except Exception as e:
+        return {
+            "error": str(e)
+        }

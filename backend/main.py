@@ -92,18 +92,22 @@ def predict_churn(customer: CustomerFeatures):
     prob = model.predict_proba(df)[0][1]
 
     # SHAP values
+   
+
     shap_values = explainer.shap_values(df)
 
-    if isinstance(shap_values, list):
-        shap_vals = shap_values[1][0]
-    else:
-        shap_vals = np.array(shap_values)
+    shap_vals = np.array(shap_values)
 
-    # Handle different SHAP output shapes
+    print("SHAP shape:", shap_vals.shape)
+
     if shap_vals.ndim == 3:
         shap_vals = shap_vals[0, :, 1]
     elif shap_vals.ndim == 2:
         shap_vals = shap_vals[0]
+    elif shap_vals.ndim == 1:
+        pass
+    else:
+        raise ValueError(f"Unexpected SHAP shape: {shap_vals.shape}")
 
     # Top 5 important features
     top_reasons = sorted(
