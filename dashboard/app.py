@@ -156,9 +156,12 @@ if st.sidebar.button("Predict Churn"):
     }
 
     result = predict_churn(customer)
+    st.subheader("🔍 API Response")
+    st.json(result)
+    st.stop()
 
+    
     st.success("Prediction completed successfully! ✅")
-
     st.subheader("📋 Customer Summary")
 
     summary_col1, summary_col2 = st.columns(2)
@@ -178,10 +181,24 @@ if st.sidebar.button("Predict Churn"):
     
 
     st.subheader("📈 Prediction Results")
+    if "churn_probability" not in result:
+        st.error(result.get("error", "Prediction failed"))
+        st.stop()
 
-    probability = float(result["churn_probability"])
+    raw_probability = float(result["churn_probability"])
+
+    # Handle both percentage and decimal formats
+    if raw_probability > 1:
+        probability = raw_probability / 100
+    else:
+        probability = raw_probability
+
     risk = result["risk_level"]
 
+    st.write("RAW PROBABILITY:", raw_probability)
+    st.write("FINAL PROBABILITY:", probability)
+
+   
     metric1, metric2 = st.columns(2)
 
     with metric1:
@@ -196,7 +213,7 @@ if st.sidebar.button("Predict Churn"):
             value=risk
         )
 
-    st.progress(probability)
+    st.progress(min(max(probability, 0.0), 1.0))
    
 
     st.write(f"### Churn Probability: {probability*100:.2f}%")
