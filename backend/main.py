@@ -90,31 +90,31 @@ def predict_churn(customer: CustomerFeatures):
     # Prediction
    
     prob = model.predict_proba(df)[0][1]
-
-    # SHAP values
    
 
-    shap_values = explainer.shap_values(df)
+    # SHAP values
+    try:
+        explanation = explainer(df)
 
-    shap_vals = np.array(shap_values)
+        # Get SHAP values for first prediction
+        shap_vals = explanation.values[0]
 
-    print("SHAP shape:", shap_vals.shape)
+        # If multiclass or extra dimension exists
+        if len(shap_vals.shape) > 1:
+            shap_vals = shap_vals[:, 1]
 
-    if shap_vals.ndim == 3:
-        shap_vals = shap_vals[0, :, 1]
-    elif shap_vals.ndim == 2:
-        shap_vals = shap_vals[0]
-    elif shap_vals.ndim == 1:
-        pass
-    else:
-        raise ValueError(f"Unexpected SHAP shape: {shap_vals.shape}")
+        # Convert to Python floats
+        top_reasons = sorted(
+            zip(df.columns, shap_vals.tolist()),
+            key=lambda x: abs(float(x[1])),
+            reverse=True
+        )[:5]
 
-    # Top 5 important features
-    top_reasons = sorted(
-        zip(df.columns, shap_vals),
-        key=lambda x: abs(x[1]),
-        reverse=True
-    )[:5]
+    except Exception as e:
+        print("SHAP Error:", e)
+
+        # Continue prediction even if SHAP fails
+        top_reasons = []
 
     # Risk Level
     if prob >= 0.60:
@@ -128,12 +128,12 @@ def predict_churn(customer: CustomerFeatures):
         "churn_probability": round(float(prob), 4),
         "risk_level": risk,
         "top_reasons": [
-            {
-                "feature": r[0],
-                "impact": round(float(r[1]), 4)
-            }
-            for r in top_reasons
-        ]
+        {
+            "feature": feature,
+            "impact": round(float(impact), 4)
+        }
+        for feature, impact in top_reasons
+    ]
     }
 
     
