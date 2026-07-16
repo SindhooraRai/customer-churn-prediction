@@ -156,6 +156,11 @@ if st.sidebar.button("Predict Churn"):
     }
 
     result = predict_churn(customer)
+    st.write(result)
+
+    raw_probability = float(result["churn_probability"])
+    st.write("Raw:", raw_probability)
+    st.write("Progress:", raw_probability / 100)
     
     
     st.success("Prediction completed successfully! ✅")
@@ -184,8 +189,11 @@ if st.sidebar.button("Predict Churn"):
 
     raw_probability = float(result["churn_probability"])
 
-    # API returns percentages like 45.435
-    probability = raw_probability / 100
+    # Backend returns percentage (e.g. 45.435)
+    probability = raw_probability / 100.0
+
+    # Keep progress value between 0 and 1
+    probability = max(0.0, min(probability, 1.0))
 
     risk = result["risk_level"]
 
