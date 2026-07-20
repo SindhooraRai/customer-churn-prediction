@@ -135,6 +135,11 @@ def predict_churn(customer: CustomerFeatures):
         for feature, impact in top_reasons
     ]
     }
+@app.get("/")
+def root():
+    return {
+        "message": "Customer Churn Prediction API is running!"
+    }
 
     
 
