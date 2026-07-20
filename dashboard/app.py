@@ -189,11 +189,8 @@ if st.sidebar.button("Predict Churn"):
 
     raw_probability = float(result["churn_probability"])
 
-    # Backend returns percentage (e.g. 45.435)
-    probability = raw_probability / 100.0
-
-    # Keep progress value between 0 and 1
-    probability = max(0.0, min(probability, 1.0))
+    # Backend returns a value between 0 and 1
+    probability = max(0.0, min(raw_probability, 1.0))
 
     risk = result["risk_level"]
 
@@ -207,7 +204,7 @@ if st.sidebar.button("Predict Churn"):
     with metric1:
         st.metric(
             label="📊 Churn Probability",
-            value=f"{raw_probability:.2f}%"
+            value=f"{probability * 100:.2f}%"
         )
 
     with metric2:
