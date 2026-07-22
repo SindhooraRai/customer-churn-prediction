@@ -156,11 +156,11 @@ if st.sidebar.button("Predict Churn"):
     }
 
     result = predict_churn(customer)
-    st.write(result)
+    #st.write(result)
 
     raw_probability = float(result["churn_probability"])
-    st.write("Raw:", raw_probability)
-    st.write("Progress:", raw_probability / 100)
+    #st.write("Raw:", raw_probability)
+    #st.write("Progress:", raw_probability / 100)
     
     
     st.success("Prediction completed successfully! ✅")
@@ -189,14 +189,14 @@ if st.sidebar.button("Predict Churn"):
 
     raw_probability = float(result["churn_probability"])
 
-    # Backend returns a value between 0 and 1
-    probability = max(0.0, min(raw_probability, 1.0))
+    # Backend should return a value between 0 and 1
+    probability = raw_probability
 
     risk = result["risk_level"]
 
-    st.write("API Response:", result)
-    st.write("Raw Probability:", raw_probability)
-    st.write("Progress Value:", probability)
+    #st.write("API Response:", result)
+    #st.write("Raw Probability:", raw_probability)
+    #st.write("Progress Value:", probability)
 
    
     metric1, metric2 = st.columns(2)
